@@ -1,0 +1,201 @@
+.snap-container[data-depth="entering"]
+  :is(
+    .page-name,
+    .about-head
+  ) {
+  animation: surface-fade 1000ms ease-out forwards;
+}
+
+.snap-container[data-depth="returning"]
+  :is(
+    .page-name,
+    .about-head
+  ) {
+  animation: surface-fade 1000ms ease-in reverse forwards;
+}
+
+.snap-container[data-depth="entering"]
+  :is(.personal-values-cards, .projects-cards) {
+  animation: surface-plunge 1000ms cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
+.snap-container[data-depth="returning"]
+  :is(.personal-values-cards, .projects-cards) {
+  animation: surface-plunge 1000ms cubic-bezier(0.55, 0, 1, 0.45) reverse
+    forwards;
+}
+
+.snap-container[data-depth="suspended"],
+.snap-container[data-depth="open"],
+.snap-container[data-depth="exiting"],
+.snap-container[data-depth="surfacing"] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes surface-fade {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes surface-plunge {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+
+.water-canvas {
+  transition: none;
+}
+
+.water-canvas[data-depth="entering"] {
+  transform: scale(1.6);
+  transition: transform 1000ms cubic-bezier(0.55, 0, 1, 0.45);
+}
+
+.water-canvas[data-depth="suspended"] {
+  transform: scale(1.1);
+}
+
+.water-canvas[data-depth="open"] {
+  transform: scale(1.5);
+  transition: transform 1000ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.water-canvas[data-depth="exiting"] {
+  transform: scale(1);
+  transition: transform 1000ms cubic-bezier(0.55, 0, 1, 0.45);
+}
+
+.water-canvas[data-depth="surfacing"] {
+  transform: scale(1.08);
+}
+
+.water-canvas[data-depth="returning"] {
+  transform: scale(1);
+  transition: transform 1000ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.depth-blackout {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.depth-blackout[data-phase="entering"],
+.depth-blackout[data-phase="exiting"] {
+  animation: blackout-in 1000ms cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
+.depth-blackout[data-phase="suspended"],
+.depth-blackout[data-phase="surfacing"] {
+  opacity: 1;
+}
+
+.depth-blackout[data-phase="open"],
+.depth-blackout[data-phase="returning"] {
+  animation: blackout-out 700ms ease-out forwards;
+}
+
+@keyframes blackout-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes blackout-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.depth-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: none;
+  pointer-events: none;
+}
+
+.depth-layer[data-phase="open"] {
+  pointer-events: auto;
+}
+
+.depth-layer > * > * {
+  opacity: 0;
+}
+
+.depth-layer[data-phase="open"] > * > * {
+  animation: depth-rise 1000ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.depth-layer[data-phase="exiting"] > * > * {
+  animation: depth-recede 1000ms cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
+.depth-layer[data-phase="exiting"] > * > .depth-page-exit {
+  animation: depth-rise 1000ms ease-in reverse forwards;
+}
+
+@keyframes depth-rise {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes depth-recede {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.667);
+  }
+}
+
+.depth-layer[data-phase="entering"] > * > * {
+  animation: surface-plunge 1000ms cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
+.depth-layer[data-phase="entering"] > * > .depth-page-exit {
+  animation: depth-rise 1000ms ease-in reverse forwards;
+}
+
+.depth-layer:has(> .deep-page) {
+  background: #000;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .snap-container[data-depth="entering"] *,
+  .snap-container[data-depth="returning"] *,
+  .depth-layer > * > *,
+  .depth-blackout {
+    animation-duration: 1ms;
+  }
+
+  .water-canvas {
+    transition-duration: 1ms !important;
+  }
+}

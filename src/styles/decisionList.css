@@ -1,0 +1,99 @@
+.decision-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  border-top: 1px solid rgba(226, 238, 255, 0.22);
+}
+
+.decision-list li {
+  border-bottom: 1px solid rgba(226, 238, 255, 0.18);
+}
+
+.decision-list-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "title link"
+    "body  body";
+  align-items: baseline;
+  gap: calc(16 * var(--u)) calc(16 * var(--u));
+  padding: calc(20 * var(--u)) calc(8 * var(--u));
+
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: calc(8 * var(--u));
+  transition: background-color 160ms ease;
+}
+
+.decision-list-row:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.decision-list-row:focus-visible {
+  outline: calc(2 * var(--u)) solid #ffffff;
+  outline-offset: calc(2 * var(--u));
+}
+
+.decision-list-title {
+  grid-area: title;
+
+  font-size: calc(19 * var(--u));
+  font-weight: 700;
+  line-height: 1.35;
+  word-break: keep-all;
+  text-wrap: balance;
+  text-shadow: 0 1px calc(6 * var(--u)) rgba(10, 24, 56, 0.45);
+}
+
+.decision-list-body {
+  grid-area: body;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: baseline;
+  gap: calc(8 * var(--u)) calc(12 * var(--u));
+  min-width: 0;
+}
+
+.decision-list-label {
+  font-size: calc(11 * var(--u));
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.45);
+  white-space: nowrap;
+}
+
+.decision-list-problem,
+.decision-list-result {
+  font-size: calc(12 * var(--u));
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.72);
+  word-break: keep-all;
+  text-wrap: pretty;
+}
+
+.decision-list-judgment {
+  font-size: calc(13 * var(--u));
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.95);
+  word-break: keep-all;
+  text-wrap: balance;
+}
+
+.decision-list-link {
+  grid-area: link;
+
+  font-size: calc(11 * var(--u));
+  color: rgba(255, 255, 255, 0.55);
+  white-space: nowrap;
+}
+
+button.decision-list-row {
+  width: 100%;
+  margin: 0;
+  border: none;
+  background: none;
+
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}

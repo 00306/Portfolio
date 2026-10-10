@@ -1,0 +1,84 @@
+.hero {
+  position: relative;
+}
+
+.hero-block {
+  --enter-blur: calc(14 * var(--u));
+  --enter-dur: 2.5s;
+  --enter-fade-dur: 0.8s;
+  --enter-delay: 0.8s;
+}
+
+@keyframes hero-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: var(--enter-opacity, 1);
+  }
+}
+
+@keyframes hero-focus {
+  from {
+    filter: blur(var(--enter-blur));
+  }
+  to {
+    filter: blur(0px);
+  }
+}
+
+.hero-block {
+  position: absolute;
+  left: calc(72 * var(--u));
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0;
+  font-family: "IBM Plex Sans KR", sans-serif;
+  color: rgba(255, 255, 255, 0.92);
+  pointer-events: none;
+  user-select: none;
+}
+
+.hero-tags,
+.hero-stance,
+.hero-name {
+  animation: hero-fade var(--enter-fade-dur) cubic-bezier(0.33, 0, 0.67, 1)
+      var(--enter-delay) both,
+    hero-focus var(--enter-dur) cubic-bezier(0.16, 1, 0.3, 1) var(--enter-delay)
+      both;
+  will-change: opacity, filter;
+}
+
+.hero-tags {
+  display: flex;
+  gap: 0.4em;
+  font-size: calc(15.9 * var(--u));
+  font-weight: 500;
+  letter-spacing: 0;
+  --enter-opacity: 1;
+  text-shadow: 0 calc(2 * var(--u)) calc(2 * var(--u)) rgba(10, 20, 40, 0.38);
+}
+
+.hero-tags span:not(:last-child)::after {
+  content: "·";
+  margin-left: 0.4em;
+  opacity: 0.8;
+}
+
+.hero-stance {
+  margin-top: 0.3em;
+  font-size: calc(40.8 * var(--u));
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  text-shadow: 0 calc(2 * var(--u)) calc(8 * var(--u)) rgba(10, 20, 40, 0.3);
+}
+
+.hero-name {
+  margin: 0.12em 0 0;
+  font-size: calc(104 * var(--u));
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  text-shadow: 0 calc(3 * var(--u)) calc(10 * var(--u)) rgba(10, 20, 40, 0.22);
+}

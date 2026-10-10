@@ -1,0 +1,15 @@
+@import "./pressable.css";
+@import "./surface.css";
+
+:root {
+  --canvas-w: 1512;
+  --canvas-h: 861;
+  --u: min(100vw / var(--canvas-w), 100vh / var(--canvas-h));
+  --frame-w: calc(var(--canvas-w) * var(--u));
+  --frame-h: calc(var(--canvas-h) * var(--u));
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}

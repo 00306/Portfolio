@@ -1,0 +1,94 @@
+.personal-values {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+
+  font-family: "IBM Plex Sans KR", sans-serif;
+  color: rgba(255, 255, 255, 0.98);
+  user-select: none;
+}
+
+.personal-values-cards {
+  width: 100%;
+  margin: 0;
+  padding: 0 calc(72 * var(--u));
+  list-style: none;
+
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: calc(30.2 * var(--u));
+
+  transform-origin: var(--plunge-origin-x, 50%) var(--plunge-origin-y, 50%);
+}
+
+.value-card {
+  --card-glass: 0.45;
+
+  height: calc(499.4 * var(--u));
+  padding: calc(14 * var(--u));
+  overflow: hidden;
+  gap: calc(16 * var(--u));
+}
+
+.value-card-image {
+  flex: none;
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: calc(20 * var(--u));
+  object-fit: cover;
+  background: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 calc(2 * var(--u)) calc(8 * var(--u)) rgba(20, 35, 65, 0.25);
+
+  filter: grayscale(1);
+  transition: filter 400ms var(--press-ease);
+}
+
+.value-card:hover .value-card-image,
+.value-card:focus-visible .value-card-image {
+  filter: grayscale(0);
+}
+
+.value-card-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 0 calc(6 * var(--u));
+
+  display: flex;
+  flex-direction: column;
+  gap: calc(10 * var(--u));
+
+  color: #ffffff;
+}
+
+.value-card-title {
+  font-size: calc(16.5 * var(--u));
+  font-weight: 700;
+  line-height: 1.35;
+  white-space: nowrap;
+  text-shadow: 0 calc(3 * var(--u)) calc(10 * var(--u)) rgba(10, 20, 40, 0.28);
+}
+
+.value-card-description {
+  margin: 0;
+  font-size: calc(13.6 * var(--u));
+  font-weight: 400;
+  line-height: 1.6;
+  word-break: keep-all;
+  white-space: pre-line;
+  text-shadow: 0 0 calc(2 * var(--u)) rgba(20, 35, 65, 0.4),
+    0 1px calc(8 * var(--u)) rgba(38, 62, 105, 0.55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pressable.value-card:hover,
+  .pressable.value-card:focus-visible,
+  .pressable.value-card:active {
+    transform: none;
+  }
+
+  .value-card-image {
+    transition-duration: 1ms;
+  }
+}

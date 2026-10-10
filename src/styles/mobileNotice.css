@@ -1,0 +1,114 @@
+.mobile-notice {
+  box-sizing: border-box;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 40px;
+
+  padding: max(32px, env(safe-area-inset-top))
+    max(24px, env(safe-area-inset-right))
+    max(32px, env(safe-area-inset-bottom))
+    max(24px, env(safe-area-inset-left));
+
+  background: url("/background.png") center / cover no-repeat, #b9cdee;
+  font-family: "IBM Plex Sans KR", sans-serif;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 1px 8px rgba(38, 62, 105, 0.5);
+}
+
+.mobile-notice-hero {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-notice-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4em;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.mobile-notice-tags span:not(:last-child)::after {
+  content: "·";
+  margin-left: 0.4em;
+  opacity: 0.8;
+}
+
+.mobile-notice-stance {
+  margin: 0.3em 0 0;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.mobile-notice-role {
+  margin: 0.12em 0 0;
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-shadow: 0 3px 10px rgba(10, 20, 40, 0.22);
+}
+
+.mobile-notice-name {
+  margin: 14px 0 0;
+  font-size: 17px;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.mobile-notice-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.mobile-notice-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  box-sizing: border-box;
+  padding: 0 18px;
+
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
+  border-radius: 999px;
+  background: none;
+
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: inherit;
+  text-decoration: none;
+  text-shadow: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-notice-chip:active {
+  transform: translateY(1px);
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.mobile-notice-arrow {
+  font-size: 0.9em;
+  opacity: 0.85;
+}
+
+.mobile-notice-guide {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.mobile-notice-guide p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  opacity: 0.9;
+  word-break: keep-all;
+}

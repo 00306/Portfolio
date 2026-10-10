@@ -1,0 +1,54 @@
+:root {
+  --press-border: rgba(255, 255, 255, 0.8);
+  --press-border-width: calc(1.5 * var(--u));
+  --press-border-strong: rgba(255, 255, 255, 0.95);
+  --press-fill: rgba(255, 255, 255, 0.16);
+  --press-radius: calc(16 * var(--u));
+  --press-duration: 180ms;
+  --press-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.pressable {
+  border: var(--press-border-width) solid var(--press-border);
+  border-radius: var(--press-radius);
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color var(--press-duration) var(--press-ease),
+    background-color var(--press-duration) var(--press-ease),
+    transform var(--press-duration) var(--press-ease),
+    box-shadow var(--press-duration) var(--press-ease);
+}
+
+.pressable:hover {
+  border-color: var(--press-border-strong);
+  background-color: var(--press-fill);
+  transform: translateY(1px);
+  box-shadow: inset 0 calc(3 * var(--u)) calc(8 * var(--u)) calc(-2 * var(--u))
+    rgba(10, 30, 60, 0.35);
+}
+
+.pressable:active {
+  transform: translateY(calc(2 * var(--u)));
+  box-shadow: inset 0 calc(5 * var(--u)) calc(12 * var(--u)) calc(-3 * var(--u))
+    rgba(10, 30, 60, 0.5);
+  transition-duration: 90ms;
+}
+
+.pressable:focus-visible {
+  outline: calc(2 * var(--u)) solid var(--press-border-strong);
+  outline-offset: calc(3 * var(--u));
+  border-color: var(--press-border-strong);
+  background-color: var(--press-fill);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pressable {
+    transition-duration: 1ms;
+  }
+
+  .pressable:hover,
+  .pressable:active {
+    transform: none;
+  }
+}

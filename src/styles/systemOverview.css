@@ -1,0 +1,102 @@
+.system-overview {
+  --overview-ink: #ffffff;
+  --overview-muted: rgba(255, 255, 255, 0.65);
+  --overview-line: rgba(226, 238, 255, 0.65);
+  --overview-border: rgba(226, 238, 255, 0.9);
+  --overview-faint: rgba(226, 238, 255, 0.35);
+  --overview-fill: rgba(38, 62, 105, 0.5);
+
+  display: block;
+  width: 100%;
+  height: auto;
+  font-family: "Pretendard", sans-serif;
+}
+
+.system-overview-layer {
+  fill: var(--overview-fill);
+  stroke: var(--overview-border);
+}
+
+.system-overview-name {
+  fill: var(--overview-ink);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.system-overview-name.is-small {
+  font-size: 13px;
+}
+
+.system-overview-caption {
+  fill: var(--overview-muted);
+  font-size: 11px;
+}
+
+.system-overview-tag {
+  fill: none;
+  stroke: rgba(226, 238, 255, 0.7);
+}
+
+.system-overview-tag-text {
+  fill: rgba(255, 255, 255, 0.9);
+  font-size: 11px;
+}
+
+.system-overview-arrow {
+  stroke: var(--overview-ink);
+  stroke-width: 1.2;
+}
+
+.system-overview-arrow-head {
+  fill: none;
+  stroke: var(--overview-ink);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+.system-overview-link {
+  fill: none;
+  stroke: var(--overview-line);
+  stroke-width: 1.1;
+}
+
+.system-overview-service {
+  fill: none;
+  stroke: var(--overview-border);
+}
+
+.system-overview-service-name {
+  fill: var(--overview-ink);
+  font-size: 12px;
+}
+
+.system-overview-layer.is-core {
+  stroke: rgba(255, 255, 255, 0.95);
+  stroke-width: 2;
+}
+
+.system-overview-step {
+  fill: rgba(255, 255, 255, 0.06);
+  stroke: rgba(226, 238, 255, 0.55);
+  stroke-width: 1;
+}
+
+.system-overview-dependency {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.95);
+  stroke-width: 1.8;
+}
+
+.system-overview-flow {
+  fill: none;
+  stroke: rgba(226, 238, 255, 0.55);
+  stroke-width: 1.2;
+}
+
+.system-overview-flow-head {
+  fill: none;
+  stroke: rgba(226, 238, 255, 0.55);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}

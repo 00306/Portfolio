@@ -1,0 +1,28 @@
+.snap-container {
+  height: 100vh;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+}
+
+.snap-slot {
+  height: 100vh;
+  scroll-snap-align: start;
+  display: grid;
+  place-items: center;
+}
+
+.snap-slot > * {
+  box-sizing: border-box;
+  width: var(--frame-w);
+  height: var(--frame-h);
+}
+
+.depth-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+}
+
+.snap-container.is-submerged {
+  overflow: hidden;
+}

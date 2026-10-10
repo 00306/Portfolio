@@ -1,0 +1,62 @@
+:root {
+  --glass-text-shadow: 0 0 calc(2 * var(--u)) rgba(20, 35, 65, 0.4),
+    0 1px calc(8 * var(--u)) rgba(38, 62, 105, 0.55);
+  --heading-text-shadow: 0 calc(3 * var(--u)) calc(10 * var(--u))
+    rgba(10, 20, 40, 0.28);
+
+  --card-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  --card-shadow-rest: var(--card-highlight),
+    0 1px calc(3 * var(--u)) rgba(38, 62, 105, 0.3),
+    calc(10 * var(--u)) calc(16 * var(--u)) calc(28 * var(--u)) calc(-8 * var(--u))
+    rgba(38, 62, 105, 0.32);
+  --card-shadow-lifted: var(--card-highlight),
+    0 calc(2 * var(--u)) calc(6 * var(--u)) rgba(38, 62, 105, 0.22),
+    calc(18 * var(--u)) calc(28 * var(--u)) calc(44 * var(--u)) calc(-10 * var(--u))
+    rgba(38, 62, 105, 0.3);
+  --card-shadow-pressed: var(--card-highlight),
+    0 1px calc(4 * var(--u)) rgba(38, 62, 105, 0.3),
+    calc(12 * var(--u)) calc(20 * var(--u)) calc(32 * var(--u)) calc(-9 * var(--u))
+    rgba(38, 62, 105, 0.34);
+}
+
+.page-name {
+  position: absolute;
+  top: calc(60.3 * var(--u));
+  left: calc(72 * var(--u));
+  margin: 0;
+
+  font-size: calc(27.2 * var(--u));
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  text-shadow: var(--heading-text-shadow);
+}
+
+.glass-card {
+  --press-radius: calc(34 * var(--u));
+  --press-border-width: calc(2 * var(--u));
+  --press-border: rgba(226, 238, 255, 0.9);
+  --press-border-strong: rgba(238, 245, 255, 1);
+  --press-fill: rgba(38, 62, 105, var(--card-glass));
+
+  box-sizing: border-box;
+  background-color: var(--press-fill);
+  backdrop-filter: blur(calc(18 * var(--u))) saturate(140%);
+  -webkit-backdrop-filter: blur(calc(18 * var(--u))) saturate(140%);
+  box-shadow: var(--card-shadow-rest);
+
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.pressable.glass-card:hover,
+.pressable.glass-card:focus-visible {
+  transform: translateY(calc(-12 * var(--u)));
+  box-shadow: var(--card-shadow-lifted);
+}
+
+.pressable.glass-card:active {
+  transform: translateY(calc(-5 * var(--u)));
+  box-shadow: var(--card-shadow-pressed);
+}

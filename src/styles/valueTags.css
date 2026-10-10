@@ -1,0 +1,14 @@
+.value-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25em 0.75em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.value-tag {
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.72);
+  white-space: nowrap;
+}
