@@ -4,7 +4,10 @@ import { getScrollRoot, scrollTopOf } from "../effects/scrollRoot";
 const GESTURE_GAP_MS = 200;
 const RISE_RATIO = 1.5;
 const RISE_MIN_DELTA = 10;
-const MOVE_FALLBACK_MS = 900;
+
+// Chrome의 scrollTo({ behavior: "smooth" })를 한 화면 높이 거리에서 계측한 값
+const PAGE_DURATION_MS = 690;
+const pageEasing = cubicBezier(0.4, 0, 0, 1);
 
 export function useWheelPaging() {
   useEffect(() => {
@@ -14,13 +17,34 @@ export function useWheelPaging() {
     let moving = false;
     let lastWheelAt = 0;
     let lastDelta = 0;
-    let fallbackTimer = 0;
+    let raf = 0;
 
     const finishMove = () => {
-      if (!moving) return;
+      cancelAnimationFrame(raf);
       moving = false;
-      window.clearTimeout(fallbackTimer);
       root.style.scrollSnapType = "";
+    };
+
+    const animateScrollTo = (target: number) => {
+      const from = root.scrollTop;
+      const distance = target - from;
+      const startedAt = performance.now();
+
+      moving = true;
+      root.style.scrollSnapType = "none";
+
+      const step = (now: number) => {
+        const progress = Math.min(1, (now - startedAt) / PAGE_DURATION_MS);
+        root.scrollTop = from + distance * pageEasing(progress);
+
+        if (progress < 1) {
+          raf = requestAnimationFrame(step);
+        } else {
+          root.scrollTop = target;
+          finishMove();
+        }
+      };
+      raf = requestAnimationFrame(step);
     };
 
     const moveBy = (direction: 1 | -1) => {
@@ -41,10 +65,7 @@ export function useWheelPaging() {
       const target = current + direction;
       if (target < 0 || target >= slots.length) return;
 
-      moving = true;
-      root.style.scrollSnapType = "none";
-      root.scrollTo({ top: tops[target], behavior: "smooth" });
-      fallbackTimer = window.setTimeout(finishMove, MOVE_FALLBACK_MS);
+      animateScrollTo(tops[target]);
     };
 
     const onWheel = (event: WheelEvent) => {
@@ -68,13 +89,46 @@ export function useWheelPaging() {
     };
 
     root.addEventListener("wheel", onWheel, { passive: false });
-    root.addEventListener("scrollend", finishMove);
 
     return () => {
       root.removeEventListener("wheel", onWheel);
-      root.removeEventListener("scrollend", finishMove);
-      window.clearTimeout(fallbackTimer);
+      cancelAnimationFrame(raf);
       root.style.scrollSnapType = "";
     };
   }, []);
+}
+
+function cubicBezier(
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number
+): (t: number) => number {
+  const axis = (a: number, b: number, s: number) =>
+    3 * (1 - s) * (1 - s) * s * a + 3 * (1 - s) * s * s * b + s * s * s;
+  const slope = (a: number, b: number, s: number) =>
+    3 * (1 - s) * (1 - s) * a + 6 * (1 - s) * s * (b - a) + 3 * s * s * (1 - b);
+
+  return (t: number) => {
+    if (t <= 0) return 0;
+    if (t >= 1) return 1;
+
+    let s = t;
+    for (let i = 0; i < 8; i++) {
+      const dx = slope(x1, x2, s);
+      if (Math.abs(dx) < 1e-6) break;
+      s -= (axis(x1, x2, s) - t) / dx;
+    }
+
+    let lo = 0;
+    let hi = 1;
+    s = Math.min(1, Math.max(0, s));
+    for (let i = 0; i < 20 && Math.abs(axis(x1, x2, s) - t) > 1e-5; i++) {
+      if (axis(x1, x2, s) < t) lo = s;
+      else hi = s;
+      s = (lo + hi) / 2;
+    }
+
+    return axis(y1, y2, s);
+  };
 }
