@@ -56,6 +56,11 @@ const STICKER_DRAG = 1 - 2 * ANCHOR_ZETA * Math.sqrt(ANCHOR_STIFFNESS);
 
 const RIPPLE_FRAMES = Math.round(RIPPLE_DECAY * 5);
 
+const SIM_HZ = 120;
+const STEP_MS = 1000 / SIM_HZ;
+const MAX_STEPS_PER_FRAME = 4;
+const STEP_SNAP = 0.25;
+
 type WaterRippleEffectProps = {
   submerged: boolean;
   plunging: boolean;
@@ -230,47 +235,28 @@ export function WaterRippleEffect({
     const uUvMin = new Array(MAX_STICKERS * 2).fill(0);
     const uUvMax = new Array(MAX_STICKERS * 2).fill(0);
 
-    let raf = 0;
+    const fillStickerUniforms = (
+      count: number,
+      aspect: number,
+      worldToGridY: number
+    ) => {
+      for (let i = 0; i < count; i++) {
+        const b = bodies[i]!;
+        uCenter[i * 2] = b.x;
+        uCenter[i * 2 + 1] = b.y + worldToGridY;
+        uPrev[i * 2] = b.px;
+        uPrev[i * 2 + 1] = b.py + worldToGridY;
+        uSize[i * 2] = (b.height * b.ratio) / aspect;
+        uSize[i * 2 + 1] = b.height;
+        uUvMin[i * 2] = b.uvMin[0];
+        uUvMin[i * 2 + 1] = b.uvMin[1];
+        uUvMax[i * 2] = b.uvMax[0];
+        uUvMax[i * 2 + 1] = b.uvMax[1];
+      }
+    };
 
-    const frame = () => {
-      const aspect = window.innerWidth / window.innerHeight;
-      const now = performance.now();
-      const t = now * 0.001;
+    const stepStickers = (aspect: number, t: number) => {
       const radiusOf = (b: StickerBody) => b.height * 0.5 * 1.05;
-
-      const toneEased = submergedRef.current ? 1 : 0;
-
-      const plunge = plungingRef.current;
-      if (plunge && !stir.active) stir.startedAt = now;
-      stir.active = plunge;
-      const stirMs = plunge ? now - stir.startedAt : 0;
-      const stirLevel = plunge ? stirEnvelope(stirMs) : 0;
-      const stirSince = stirMs * 0.001;
-
-      if (submergedRef.current) cursor.active = 0;
-
-      const texelX = 1 / gl.simWidth;
-      const texelY = 1 / gl.simHeight;
-
-      const scroll = readScroll();
-      const scrollCells = scroll * gl.simHeight;
-      const targetShift = Math.floor(scrollCells);
-
-      if (camera.simHeight !== gl.simHeight) {
-        camera.simHeight = gl.simHeight;
-        camera.shift = targetShift;
-      } else if (targetShift !== camera.shift) {
-        gl.shiftSim(targetShift - camera.shift);
-        camera.shift = targetShift;
-      }
-
-      const shiftRemainder = scrollCells - camera.shift;
-      const worldToGridY = camera.shift * texelY;
-
-      if (cursor.active > 0) {
-        cursor.x = pointer.x;
-        cursor.y = pointer.y - scroll;
-      }
 
       for (let i = 0; i < bodies.length; i++) {
         for (let j = i + 1; j < bodies.length; j++) {
@@ -341,32 +327,19 @@ export function WaterRippleEffect({
         b.x += b.vx;
         b.y += b.vy;
       });
+    };
 
+    const stepWater = (
+      aspect: number,
+      t: number,
+      worldToGridY: number,
+      toneEased: number
+    ) => {
       const count = Math.min(bodies.length, MAX_STICKERS);
-      for (let i = 0; i < count; i++) {
-        const b = bodies[i]!;
-        uCenter[i * 2] = b.x;
-        uCenter[i * 2 + 1] = b.y + worldToGridY;
-        uPrev[i * 2] = b.px;
-        uPrev[i * 2 + 1] = b.py + worldToGridY;
-        uSize[i * 2] = (b.height * b.ratio) / aspect;
-        uSize[i * 2 + 1] = b.height;
-        uUvMin[i * 2] = b.uvMin[0];
-        uUvMin[i * 2 + 1] = b.uvMin[1];
-        uUvMax[i * 2] = b.uvMax[0];
-        uUvMax[i * 2 + 1] = b.uvMax[1];
-      }
+      fillStickerUniforms(count, aspect, worldToGridY);
 
       gl.use(gl.simProgram);
-      gl.setVec2(gl.simProgram, "u_texel", texelX, texelY);
-      gl.setFloat(gl.simProgram, "u_damping", DAMPING);
-      gl.setFloat(gl.simProgram, "u_dropRadius", DROP_RADIUS);
-      gl.setFloat(gl.simProgram, "u_aspect", aspect);
       gl.setFloat(gl.simProgram, "u_time", t);
-      gl.setFloat(gl.simProgram, "u_swellForce", SWELL_FORCE);
-      gl.setFloat(gl.simProgram, "u_stirForce", STIR_FORCE * stirLevel);
-      gl.setFloat(gl.simProgram, "u_stirTime", stirSince);
-
       gl.setVec2(gl.simProgram, "u_drop", click.x, click.y + worldToGridY);
       gl.setFloat(
         gl.simProgram,
@@ -378,7 +351,6 @@ export function WaterRippleEffect({
       gl.stepSim();
 
       gl.use(gl.cursorProgram);
-      gl.setVec2(gl.cursorProgram, "u_texel", texelX, texelY);
       gl.setVec2(
         gl.cursorProgram,
         "u_cursor",
@@ -392,13 +364,7 @@ export function WaterRippleEffect({
         cursor.py + worldToGridY
       );
       gl.setFloat(gl.cursorProgram, "u_cursorActive", cursor.active);
-      gl.setFloat(gl.cursorProgram, "u_cursorRadius", CURSOR_RADIUS);
-      gl.setFloat(gl.cursorProgram, "u_cursorDepth", CURSOR_DEPTH);
-      gl.setFloat(gl.cursorProgram, "u_fade", CURSOR_FADE);
-      gl.setFloat(gl.cursorProgram, "u_stiffness", CURSOR_STIFFNESS);
-      gl.setFloat(gl.cursorProgram, "u_aspect", aspect);
       gl.setFloat(gl.cursorProgram, "u_count", count);
-      gl.setFloat(gl.cursorProgram, "u_stickerDepth", STICKER_DEPTH);
       gl.setVec2Array(gl.cursorProgram, "u_center", uCenter);
       gl.setVec2Array(gl.cursorProgram, "u_prev", uPrev);
       gl.setVec2Array(gl.cursorProgram, "u_size", uSize);
@@ -413,6 +379,98 @@ export function WaterRippleEffect({
         b.px = b.x;
         b.py = b.y;
       });
+    };
+
+    let raf = 0;
+    let lastFrameAt = performance.now();
+    let stepBudget = STEP_MS;
+
+    const takeSteps = (now: number): number => {
+      const elapsed = now - lastFrameAt;
+      lastFrameAt = now;
+      stepBudget += Math.min(elapsed, STEP_MS * MAX_STEPS_PER_FRAME);
+
+      const steps = Math.min(
+        MAX_STEPS_PER_FRAME,
+        Math.max(0, Math.floor(stepBudget / STEP_MS + STEP_SNAP))
+      );
+      stepBudget = Math.min(stepBudget - steps * STEP_MS, STEP_MS);
+      return steps;
+    };
+
+    const frame = () => {
+      const aspect = window.innerWidth / window.innerHeight;
+      const now = performance.now();
+      const t = now * 0.001;
+      const steps = takeSteps(now);
+
+      const toneEased = submergedRef.current ? 1 : 0;
+
+      const plunge = plungingRef.current;
+      if (plunge && !stir.active) stir.startedAt = now;
+      stir.active = plunge;
+      const stirMs = plunge ? now - stir.startedAt : 0;
+      const stirLevel = plunge ? stirEnvelope(stirMs) : 0;
+      const stirSince = stirMs * 0.001;
+
+      if (submergedRef.current) cursor.active = 0;
+
+      const texelX = 1 / gl.simWidth;
+      const texelY = 1 / gl.simHeight;
+
+      const scroll = readScroll();
+      const scrollCells = scroll * gl.simHeight;
+      const targetShift = Math.floor(scrollCells);
+
+      if (camera.simHeight !== gl.simHeight) {
+        camera.simHeight = gl.simHeight;
+        camera.shift = targetShift;
+      } else if (targetShift !== camera.shift) {
+        gl.shiftSim(targetShift - camera.shift);
+        camera.shift = targetShift;
+      }
+
+      const shiftRemainder = scrollCells - camera.shift;
+      const worldToGridY = camera.shift * texelY;
+
+      gl.use(gl.simProgram);
+      gl.setVec2(gl.simProgram, "u_texel", texelX, texelY);
+      gl.setFloat(gl.simProgram, "u_damping", DAMPING);
+      gl.setFloat(gl.simProgram, "u_dropRadius", DROP_RADIUS);
+      gl.setFloat(gl.simProgram, "u_aspect", aspect);
+      gl.setFloat(gl.simProgram, "u_swellForce", SWELL_FORCE);
+      gl.setFloat(gl.simProgram, "u_stirForce", STIR_FORCE * stirLevel);
+      gl.setFloat(gl.simProgram, "u_stirTime", stirSince);
+
+      gl.use(gl.cursorProgram);
+      gl.setVec2(gl.cursorProgram, "u_texel", texelX, texelY);
+      gl.setFloat(gl.cursorProgram, "u_cursorRadius", CURSOR_RADIUS);
+      gl.setFloat(gl.cursorProgram, "u_cursorDepth", CURSOR_DEPTH);
+      gl.setFloat(gl.cursorProgram, "u_fade", CURSOR_FADE);
+      gl.setFloat(gl.cursorProgram, "u_stiffness", CURSOR_STIFFNESS);
+      gl.setFloat(gl.cursorProgram, "u_aspect", aspect);
+      gl.setFloat(gl.cursorProgram, "u_stickerDepth", STICKER_DEPTH);
+
+      const cursorFromX = cursor.x;
+      const cursorFromY = cursor.y;
+      const cursorToX = pointer.x;
+      const cursorToY = pointer.y - scroll;
+
+      for (let k = 0; k < steps; k++) {
+        const stepT = t - ((steps - 1 - k) * STEP_MS) / 1000;
+
+        if (cursor.active > 0) {
+          const along = (k + 1) / steps;
+          cursor.x = cursorFromX + (cursorToX - cursorFromX) * along;
+          cursor.y = cursorFromY + (cursorToY - cursorFromY) * along;
+        }
+
+        stepStickers(aspect, stepT);
+        stepWater(aspect, stepT, worldToGridY, toneEased);
+      }
+
+      const count = Math.min(bodies.length, MAX_STICKERS);
+      fillStickerUniforms(count, aspect, worldToGridY);
 
       const screenToGridY = -shiftRemainder * texelY;
 
