@@ -7,7 +7,8 @@ export const CORE_DECISIONS: Decision[] = [
     title: "TCA 기반 리팩토링",
     judgment: "MVVM에서 상태 변경을 Reducer로 모으는 TCA로 전환",
     problem: "MVVM에서 View가 여러 매니저에 직접 의존해 상태 변경이 흩어짐",
-    result: "Feature 6개 · Reducer 12개로 나눠 상태가 바뀌는 경로가 하나로",
+    result:
+      "Login · Main · Onboarding · Purchase · Setting 5개 기능을 각각 Reducer로 나눠 상태가 바뀌는 경로가 하나로",
     linkLabel: "#40",
     href: `${PR_URL}/40`,
   },
@@ -27,7 +28,7 @@ export const CORE_DECISIONS: Decision[] = [
     problem:
       "SwiftData · iCloud · Firestore 3곳의 사용자 정보가 어긋날 수 있음",
     result:
-      "어느 값이 맞는지의 기준이 Firestore 하나로 정해지고, 첫 화면은 기기 저장본으로 바로 표시",
+      "어느 값이 맞는지의 기준이 Firestore 하나로 정해짐",
     linkLabel: "#20",
     href: `${PR_URL}/20`,
   },

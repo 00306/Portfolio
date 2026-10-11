@@ -29,7 +29,6 @@ const PROJECTS: Project[] = [
       "MusicKit",
       "WebSocket",
       "Go",
-      "PostgreSQL",
       "Tuist",
       "XCTest",
       "SwiftLint",

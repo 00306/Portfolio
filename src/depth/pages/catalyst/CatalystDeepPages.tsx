@@ -165,15 +165,15 @@ export function CatalystWebviewDeepPage({ onExit, phase }: DepthPageProps) {
             {
               question: "페이지를 어떻게 로드할지? (setHtml vs 로컬 파일)",
               problem:
-                "setHtml은 HTML 전체를 IPC 메시지 하나로 넘기는데, 이 메시지는 2MB 제한이 있어 Plotly(약 4.8MB)를 담은 페이지가 로드되지 않음",
+                "setHtml은 HTML 내용 전체를 URL 안에 담아(data: URL) 넘기는데, Chromium은 IPC로 넘길 수 있는 URL 길이를 2MB로 제한해 Plotly(약 4.8MB)를 담은 페이지가 로드되지 않음",
               resolution:
-                "HTML을 디스크에 임시 파일로 쓰고 IPC로는 경로만 넘겨, 렌더러 프로세스가 그 파일을 직접 읽게 함",
+                "HTML을 디스크에 임시 파일로 쓰고 URL에는 파일 경로만 담아, 렌더러 프로세스가 그 파일을 직접 읽게 함",
             },
             {
               question: "페이지 로드 전에 데이터가 오면?",
               problem:
                 "페이지는 비동기로 로드돼, 로드 완료 전에 runJavaScript를 호출하면 받을 함수가 없어 무시됨",
-              resolution: "데이터를 큐에 보관하고, loadFinished 이후에 주입함",
+              resolution: "데이터를 보관해 두었다가, loadFinished 이후에 주입함",
             },
           ]}
         />
@@ -202,7 +202,7 @@ export function CatalystWebviewDeepPage({ onExit, phase }: DepthPageProps) {
             },
             {
               label: "디스크 I/O",
-              text: "IPC 제한을 피하는 대신, 페이지를 띄울 때마다 디스크에 쓰고 읽는 과정과 임시 파일을 관리할 책임이 생김",
+              text: "IPC URL 길이 제한을 피하는 대신, 페이지를 띄울 때마다 디스크에 쓰고 읽는 과정과 임시 파일을 관리할 책임이 생김",
             },
             {
               label: "경계 처리",

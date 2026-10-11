@@ -7,30 +7,31 @@ export const IOS_DECISIONS: Decision[] = [
   {
     title: "게임 상태 기계 분리",
     problem:
-      "게임 규칙과 서버 통신이 한 Reducer에 섞이면, 실제 소켓 없이는 규칙 검증 불가",
+      "게임 규칙을 담당하는 GameReducer가 서버 연결 · 연결 상태까지 맡고, 방 이벤트까지 게임 메시지에 섞이기 시작함",
     judgment:
-      "GameReducer를 외부 의존 없는 순수 FSM으로 분리하고, 서버 통신은 delegate로 RoomReducer에 위임",
-    result: "Room 11개 · Game 6개 테스트를 소켓 없이 실행",
+      "GameReducer를 서버 · 소켓 의존 없는 순수 FSM으로 분리하고, 서버 통신은 delegate로 RoomReducer에 위임",
+    result: "Game 테스트 6개는 mock 없이, Room 테스트 11개는 Client mock으로 검증",
     linkLabel: "PR #19",
     href: `${IOS_PR}/19`,
   },
   {
     title: "Client 계층 분리",
     problem:
-      "Feature가 Client 구현에 직접 의존하면 테스트에서 네트워크 · MusicKit 회피 불가, 전송 기술인 WebSocket이 도메인 Client와 같은 계층에 혼재",
+      "Feature가 Client 구현에 직접 의존하면 실행 환경과 테스트 환경을 나눌 수 없고, 전송 기술인 WebSocket이 도메인 Client와 같은 계층에 혼재",
     judgment:
       "모든 Client를 Interface · Live · Test 모듈로 분리해 Feature는 Interface에만 의존, WebSocket은 도메인 Client 하위 계층으로 이동",
     result: "Client 6개의 구조 통일, Feature 수정 없이 Live · Test 구현 교체",
-    linkLabel: "PR #11",
-    href: `${IOS_PR}/11`,
+    linkLabel: "PR #5 ~ #13",
+    href: `${IOS_PR}/5`,
   },
   {
-    title: "단일 이벤트 스트림 통합",
+    title: "연결 상태를 이벤트 스트림으로 통합",
     problem:
-      "WebSocket 연결에 여러 작업이 동시에 접근하고, 연결 상태 변화와 서버 메시지가 서로 다른 경로로 유입",
+      "connect 호출이 끝나면 연결된 것으로 처리해 실제 연결 시점과 어긋나고, 끊긴 이유도 구분 불가",
     judgment:
-      "연결을 actor로 감싸 여러 작업이 한 번에 하나씩만 접근하도록 하고, 연결 상태 변화를 서버 메시지와 같은 이벤트 스트림으로 통합",
-    result: "상위 Reducer가 이벤트 출처 구분 없이 스트림 하나만 처리",
+      "연결 성공은 URLSessionWebSocketDelegate로, 끊김은 수신 에러로 감지해 서버 메시지와 같은 이벤트 스트림으로 전달",
+    result:
+      "연결 상태가 실제 연결 시점과 일치, 정상 종료와 네트워크 오류 구분, 상위 Reducer는 스트림 하나만 처리",
     linkLabel: "PR #19",
     href: `${IOS_PR}/19`,
   },

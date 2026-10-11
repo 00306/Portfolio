@@ -19,7 +19,7 @@ export const CORE_DECISIONS: Decision[] = [
     judgment:
       "Plotly를 앱 안의 웹뷰로 띄우고, 스크립트 번들 · 임시 파일 로드 · 로드 후 데이터 주입 · QWebChannel 브리지로 앱 ↔ 웹 통로를 직접 설계",
     result:
-      "오프라인과 IPC 크기 제한 속에서도 3D 그래프 렌더링, 대신 앱 무게와 임시 파일 관리를 감수",
+      "오프라인과 IPC URL 길이 제한 속에서도 3D 그래프 렌더링, 대신 앱 무게와 임시 파일 관리를 감수",
     linkLabel: "layer 3",
     depthId: "catalyst-webview",
   },
