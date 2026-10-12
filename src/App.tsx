@@ -38,6 +38,8 @@ function App() {
         ))}
       </main>
 
+      <div className="surface-shield" data-depth={surface} />
+
       {DepthPage && (
         <div key={depth.topId} className="depth-layer" data-phase={depth.phase}>
           <DepthPage

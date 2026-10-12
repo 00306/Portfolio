@@ -30,7 +30,20 @@
 .snap-container[data-depth="exiting"],
 .snap-container[data-depth="surfacing"] {
   opacity: 0;
+}
+
+.surface-shield {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
   pointer-events: none;
+}
+
+.surface-shield[data-depth="suspended"],
+.surface-shield[data-depth="open"],
+.surface-shield[data-depth="exiting"],
+.surface-shield[data-depth="surfacing"] {
+  pointer-events: auto;
 }
 
 @keyframes surface-fade {

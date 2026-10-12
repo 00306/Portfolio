@@ -11,6 +11,8 @@ export type DepthPhase =
   | "returning";
 
 const BLACK_HOLD_MS = 400;
+const TRANSITION_MS = 1000;
+const SETTLE_GRACE_MS = 300;
 
 interface DepthState {
   stack: DepthId[];
@@ -88,6 +90,15 @@ export function useDepth() {
 
     return () => window.clearTimeout(timer);
   }, [phase]);
+
+  useEffect(() => {
+    if (phase !== "entering" && phase !== "exiting" && phase !== "returning") {
+      return;
+    }
+
+    const timer = window.setTimeout(settle, TRANSITION_MS + SETTLE_GRACE_MS);
+    return () => window.clearTimeout(timer);
+  }, [phase, settle]);
 
   const topId = state.stack[state.stack.length - 1] ?? null;
 
