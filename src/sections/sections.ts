@@ -19,8 +19,8 @@ type SectionEntry = {
 export const SECTIONS = [
   { id: "hero", label: "Home", Component: Hero },
   { id: "about", label: "About", Component: About },
-  { id: "values", label: "Values", Component: PersonalValues },
   { id: "projects", label: "Projects", Component: Projects },
+  { id: "values", label: "Values", Component: PersonalValues },
   { id: "footer", label: "Contact", Component: Footer },
 ] as const satisfies readonly SectionEntry[];
 
